@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "backend"
+version = "0.1.0"
+description = "AI Meeting Intelligence Platform Backend"
+authors = [
+    { name = "Author", email = "author@example.com" }
+]
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "sqlalchemy",
+    "alembic",
+    "python-jose[cryptography]",
+    "passlib[bcrypt]",
+    "python-multipart",
+    "celery",
+    "redis",
+    "httpx",
+    "openai",
+    "cloudinary",
+    "pgvector",
+    "pydantic-settings",
+    "asyncpg"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
