@@ -1,0 +1,46 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Node.js
+node_modules/
+dist/
+build/
+.next/
+out/
+.pnp
+.pnp.js
+.yarn/
+*.tsbuildinfo
+next-env.d.ts
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+.installed.cfg
+*.egg
+test.db
+
+# Logs and databases
+*.log
+*.sqlite
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo

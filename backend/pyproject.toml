@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "backend"
 version = "0.1.0"
-description = "AI Meeting Intelligence Platform Backend"
+description = "Annotiq Backend"
 authors = [
     { name = "Author", email = "author@example.com" }
 ]
@@ -24,7 +24,15 @@ dependencies = [
     "cloudinary",
     "pgvector",
     "pydantic-settings",
-    "asyncpg"
+    "asyncpg",
+    "aiosqlite",
+    "email-validator",
+    "pytest",
+    "pytest-asyncio",
+    "whisperx",
+    "torch",
+    "torchaudio",
+    "tenacity"
 ]
 
 [tool.setuptools.packages.find]

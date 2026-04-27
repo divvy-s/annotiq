@@ -2,6 +2,8 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from sqlalchemy.orm import declarative_base
 from app.config import settings
 
+Base = declarative_base()
+
 # In SQLAlchemy, postgres:// is deprecated, it should be postgresql:// or postgresql+asyncpg:// for async
 # We replace postgres:// with postgresql+asyncpg:// for async engine
 db_url = settings.DATABASE_URL

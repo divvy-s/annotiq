@@ -32,7 +32,7 @@ class User(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(Text)
     email = Column(Text, unique=True, nullable=False)
-    password_hash = Column(Text)
+    password_hash = Column(Text, nullable=False)
     organization_id = Column(UUID(as_uuid=True), ForeignKey('organizations.id'), nullable=False)
     role_id = Column(UUID(as_uuid=True), ForeignKey('roles.id'), nullable=False)
     created_at = Column(DateTime(timezone=True), default=utc_now)
@@ -93,8 +93,8 @@ class TranscriptChunk(Base):
     chunk_text = Column(Text)
     timestamp_start = Column(Float)
     timestamp_end = Column(Float)
-    embedding = Column(Vector(1536))
-    tsvector_col = Column(TSVECTOR)
+    embedding = Column(Text().with_variant(Vector(1536), "postgresql"))
+    tsvector_col = Column(Text().with_variant(TSVECTOR, "postgresql"))
     created_at = Column(DateTime(timezone=True), default=utc_now)
 
     __table_args__ = (
@@ -108,7 +108,7 @@ class Summary(Base):
     organization_id = Column(UUID(as_uuid=True), ForeignKey('organizations.id'), nullable=False)
     short_summary = Column(Text)
     detailed_summary = Column(Text)
-    summary_embedding = Column(Vector(1536))
+    summary_embedding = Column(Text().with_variant(Vector(1536), "postgresql"))
     created_at = Column(DateTime(timezone=True), default=utc_now)
 
     __table_args__ = (
@@ -124,7 +124,7 @@ class ActionItem(Base):
     description = Column(Text)
     due_date = Column(Date)
     status = Column(Text, default='open')
-    embedding = Column(Vector(1536))
+    embedding = Column(Text().with_variant(Vector(1536), "postgresql"))
     created_at = Column(DateTime(timezone=True), default=utc_now)
 
     __table_args__ = (

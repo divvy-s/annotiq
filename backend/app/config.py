@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import AnyHttpUrl
+from pydantic import Field
 
 class Settings(BaseSettings):
     # Supabase / Database

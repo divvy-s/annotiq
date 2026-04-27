@@ -5,35 +5,54 @@ from app.services.auth_service import decode_token
 
 class TenantIsolationMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        # We only want to enforce tenant isolation on protected API routes
-        # For simplicity, let's assume any route starting with /api/ but NOT auth register/login
-        if request.url.path.startswith("/api/") and not request.url.path.startswith("/api/auth/register") and not request.url.path.startswith("/api/auth/login"):
+        # 1. Bypass middleware for CORS preflight (OPTIONS) requests
+        if request.method == "OPTIONS":
+            return await call_next(request)
+
+        # 2. Define routes that do not require authentication
+        path = request.url.path
+        public_paths = [
+            "/api/auth/register",
+            "/api/auth/login",
+            "/health",
+            "/"
+        ]
+
+        # 3. Apply isolation logic only to protected /api/ routes
+        if path.startswith("/api/") and not any(path.startswith(p) for p in public_paths):
             auth_header = request.headers.get("Authorization")
+            
+            # Check for missing or malformed header
             if not auth_header or not auth_header.startswith("Bearer "):
                 return JSONResponse(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     content={"detail": "Not authenticated"}
                 )
+
             token = auth_header.split(" ")[1]
+            
             try:
+                # Decode and validate the JWT
                 payload = decode_token(token)
                 org_id = payload.get("organization_id")
+
                 if not org_id:
                     return JSONResponse(
                         status_code=status.HTTP_401_UNAUTHORIZED,
                         content={"detail": "Invalid token payload: missing organization_id"}
                     )
-                # Inject into request state
+
+                # Inject tenant info into request state for use in routes/dependencies
                 request.state.organization_id = org_id
-                # Optionally cache the decoded payload to avoid re-decoding in deps
                 request.state.jwt_payload = payload
+
             except Exception as e:
-                # HTTPExceptions raised by decode_token will be caught here
-                # but BaseHTTPMiddleware doesn't handle them perfectly, so we return a JSONResponse
+                # Catch expiration or signature errors from decode_token
                 return JSONResponse(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    content={"detail": "Could not validate credentials"}
+                    content={"detail": f"Could not validate credentials: {str(e)}"}
                 )
-        
+
+        # 4. Proceed to the next middleware or route handler
         response = await call_next(request)
         return response
